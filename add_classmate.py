@@ -53,6 +53,13 @@ class Add_Classmate:
         except:
             ref_dict={}
 
+        try:
+            f=open("numbers.pkl", "rb")
+            phone_dict=pickle.load(f)
+            f.close()
+        except:
+            phone_dict={}
+
         print("Class List:")
         i = 1
         for key, value in ref_dict.items():
@@ -60,9 +67,10 @@ class Add_Classmate:
             i += 1
 
         name=input("Enter name of classmate: ")
+        phone_num=input("Enter your phone number (without dashes): ")
         if name in ref_dict.values():
             for key, temp in ref_dict.items():
-                if (name == temp):
+                if (name.strip() == temp.strip()):
                     ref_id = key
                     break
         else:
@@ -71,6 +79,11 @@ class Add_Classmate:
         ref_dict[ref_id]=name
         f=open("names.pkl","wb")
         pickle.dump(ref_dict,f)
+        f.close()
+
+        phone_dict[ref_id]=[phone_num.strip(), False] #[phone number, msg sent or not]
+        f=open("numbers.pkl", "wb")
+        pickle.dump(phone_dict, f)
         f.close()
 
         try:
