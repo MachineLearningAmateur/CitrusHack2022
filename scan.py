@@ -4,10 +4,13 @@ import numpy as np
 import pickle
 import time
 
+from send_sms import Send
+
 class Scan:
     def __init__(self):
         self.classRoster = {}
-
+        self.phone_dict = {}
+        self.ref_dict = {}
     def getFontScale(self, text, width):
         for scale in reversed(range(0, 60, 1)):
             textSize = cv2.getTextSize(text, fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=scale/10, thickness=2)
@@ -15,11 +18,41 @@ class Scan:
             if (newScale <= width):
                 return scale/10
 
+    def alert(self): #text to alert roll call session
+        for key, value in self.phone_dict.items():
+            if (value[0] == ''):
+                continue
+            else:
+                #print(value[0])
+                textMsg = Send()
+                textMsg.send(self.ref_dict[key], value[0], "Roll call session has begun!")
+    
+    def absent(self): #text to alert absence
+        for key, value in self.phone_dict.items():
+            if (value[0] == ''):
+                continue
+            else:
+                if(value[1] == False):
+                    textMsg = Send()
+                    textMsg.send(self.ref_dict[key], value[0], "Roll call session has ended. You've been marked absent. :(")
+
+    def present(self, studentName : str, name : int):
+        for key, value in self.phone_dict.items():
+            if (value[0] == ''):
+                continue
+            else:
+                if(value[1] == False and studentName == self.ref_dict[name]):
+                    textMsg = Send()
+                    textMsg.send(self.ref_dict[key], value[0], "You have been marked present. Thank you for joining us today. :)")
+                    value[1] = True
+                    print("Marked Present.")
     def scan(self, video_capture, known_face_encodings, known_face_names, ref_dict):
         face_locations = []
         face_encodings = []
         face_names = []
         process_this_frame = True
+
+        #self.alert() #roll call session has begun!
 
         start = time.time()
         prevName = ''
@@ -56,14 +89,16 @@ class Scan:
                     cv2.putText(frame, name, (left + 6, bottom + 15), font, 0.7, (255, 255, 255), 1)
                     start = time.time() #resets the timer
                 else:
-                    if name != prevName:
+                    if name != prevName: #compares the id
                         start = time.time()
                     prevName = name
                     cv2.putText(frame, ref_dict[name], (left + 6, bottom + 20), font, self.getFontScale(ref_dict[name], right - left), (255, 255, 255), 1)
                     end = time.time() #end of timer
                     print(end - start)
                     if (end - start >= 2):
+                        print(f"ref_dict: {ref_dict}")
                         print(ref_dict[name])
+                        self.present(ref_dict[name], name) #[name, id not name]
                         self.classRoster[ref_dict[name]] = True
 
             font = cv2.FONT_HERSHEY_DUPLEX
@@ -71,15 +106,22 @@ class Scan:
             
             if cv2.waitKey(1) == ord('q'):
                 break
+
     def showClassRoster(self):
         print(self.classRoster)
 
     def start(self):
         f=open("names.pkl","rb")
-        ref_dict=pickle.load(f)        
+        ref_dict=pickle.load(f)
+        self.ref_dict = ref_dict        
         f.close()
+
         f=open("embed.pkl","rb")
         embed_dict=pickle.load(f)      
+        f.close()
+        
+        f=open("numbers.pkl", "rb")
+        self.phone_dict=pickle.load(f)
         f.close()
 
         for key, name in ref_dict.items():
@@ -98,5 +140,6 @@ class Scan:
         video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         self.scan(video_capture, known_face_encodings, known_face_names, ref_dict)
         video_capture.release()
+        self.absent() #alerts the students that failed to report for class
         self.showClassRoster()
         cv2.destroyAllWindows()
