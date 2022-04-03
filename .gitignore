@@ -1,5 +1,6 @@
 names.pkl
 embed.pkl
 numbers.pkl
+authentication.py
 __pycache__
 .venv
