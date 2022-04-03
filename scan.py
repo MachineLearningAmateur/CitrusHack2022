@@ -41,18 +41,19 @@ class Scan:
             if (value[0] == ''):
                 continue
             else:
-                if(value[1] == False and studentName == self.ref_dict[name]):
+                if(value[1] == False and key == name):
                     textMsg = Send()
                     textMsg.send(self.ref_dict[key], value[0], "You have been marked present. Thank you for joining us today. :)")
-                    value[1] = True
-                    print("Marked Present.")
+                    self.phone_dict[key][1] = True
+                    #print(f"{studentName} is marked present.")
+                    break
     def scan(self, video_capture, known_face_encodings, known_face_names, ref_dict):
         face_locations = []
         face_encodings = []
         face_names = []
         process_this_frame = True
 
-        #self.alert() #roll call session has begun!
+        self.alert() #roll call session has begun!
 
         start = time.time()
         prevName = ''
@@ -95,7 +96,7 @@ class Scan:
                     cv2.putText(frame, ref_dict[name], (left + 6, bottom + 20), font, self.getFontScale(ref_dict[name], right - left), (255, 255, 255), 1)
                     end = time.time() #end of timer
                     print(end - start)
-                    if (end - start >= 2):
+                    if (end - start >= 3):
                         print(f"ref_dict: {ref_dict}")
                         print(ref_dict[name])
                         self.present(ref_dict[name], name) #[name, id not name]

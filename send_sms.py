@@ -12,6 +12,7 @@ class Send():
         pass
 
     def send(self, name : str, phoneNumber : str, msg : str):
+  
         client = Client(account_sid, auth_token)
 
         #validation_request = client.validation_requests.create(friendly_name=name, phone_number=f"+1{phoneNumber}") #only available for non-trial twilio accounts
