@@ -70,7 +70,7 @@ class Scan:
                     matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
                     name = "Unknown"
                     face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-                    print(f"len of face distances {len(face_distances)}")
+                    #print(f"len of face distances {len(face_distances)}")
                     best_match_index = np.argmin(face_distances)
                     #print(best_match_index)
                     if matches[best_match_index]:
@@ -96,10 +96,10 @@ class Scan:
                     prevName = name
                     cv2.putText(frame, ref_dict[name], (left + 6, bottom + 20), font, self.getFontScale(ref_dict[name], right - left), (255, 255, 255), 1)
                     end = time.time() #end of timer
-                    print(end - start)
+                    #print(end - start)
                     if (end - start >= 3):
-                        print(f"ref_dict: {ref_dict}")
-                        print(ref_dict[name])
+                        #print(f"ref_dict: {ref_dict}")
+                        print(f'Current Individual: {ref_dict[name]}')
                         self.present(ref_dict[name], name) #[name, id not name]
                         self.classRoster[ref_dict[name]] = True
 
@@ -113,19 +113,37 @@ class Scan:
         print(self.classRoster)
 
     def start(self):
-        f=open("names.pkl","rb")
-        ref_dict=pickle.load(f)
-        self.ref_dict = ref_dict        
-        f.close()
+        namesBool = True
+        embedBool = True
+        numbersBool = True
+        try:
+            f=open("names.pkl","rb")
+            ref_dict=pickle.load(f)
+            self.ref_dict = ref_dict        
+            f.close()
+        except:
+            print("Missing names.pkl, please add students first!")
+            namesBool = False
 
-        f=open("embed.pkl","rb")
-        embed_dict=pickle.load(f)      
-        f.close()
+        try:
+            f=open("embed.pkl","rb")
+            embed_dict=pickle.load(f)      
+            f.close()
+        except:
+            print("Missing embed.pkl, please add students first!")
+            embedBool = False
         
-        f=open("numbers.pkl", "rb")
-        self.phone_dict=pickle.load(f)
-        f.close()
+        try:
+            f=open("numbers.pkl", "rb")
+            self.phone_dict=pickle.load(f)
+            f.close()
+        except:
+            print("Missing numbers.pkl, please add students first!")
+            numbersBool = False
 
+        if (not numbersBool and not embedBool and not namesBool):
+            return
+            
         for key, name in ref_dict.items():
             self.classRoster[name] = False #False means absent; True means present
         print(ref_dict)

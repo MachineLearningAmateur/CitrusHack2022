@@ -1,6 +1,10 @@
 import cv2 
 import face_recognition
 import pickle
+# import tkinter as tk
+# #import tkinter.font as tkFont
+# from tkinter import *
+# from tkinter import ttk
 
 class Add_Classmate:
     def __init__(self):
@@ -27,7 +31,7 @@ class Add_Classmate:
                         else:
                             embed_dict[ref_id]=[face_encoding]
                         webcam.release()
-                        cv2.waitKey(1)
+                        #cv2.waitKey(1)
                         cv2.destroyAllWindows()     
                         break
                 elif key == ord('q'):
@@ -61,6 +65,8 @@ class Add_Classmate:
             phone_dict={}
 
         print("Class List:")
+        if (len(ref_dict) == 0):
+            print("No students added yet.")
         i = 1
         for key, value in ref_dict.items():
             print(f'{i}: {value}')
