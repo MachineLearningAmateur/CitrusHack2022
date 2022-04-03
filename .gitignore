@@ -4,3 +4,5 @@ numbers.pkl
 authentication.py
 __pycache__
 .venv
+*.csv
+*.png
