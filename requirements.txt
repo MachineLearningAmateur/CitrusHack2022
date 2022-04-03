@@ -1,4 +1,5 @@
 opencv-python
+wheel
 cmake
 dlib
 face_recognition
