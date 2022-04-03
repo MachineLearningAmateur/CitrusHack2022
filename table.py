@@ -1,6 +1,7 @@
 import pandas as pd
 import dataframe_image as dfi
 from pathlib import Path
+from datetime import datetime
 
 class Attendance:
 
@@ -30,12 +31,14 @@ class Attendance:
         return table
 
     def createTablePNG(self):
-        tablePNG = dfi.export(self.createTable(), "class_roster.png")
+        utc_time = datetime.utcnow()
+        tablePNG = dfi.export(self.createTable(), f'class_roster{str(utc_time)[0:10]}.png')
         return tablePNG
 
     def tableCSV(self):
+        utc_time = datetime.utcnow()
         df = self.createTable()
-        filepath = Path(r'classroster.csv')
+        filepath = Path(f'classroster{str(utc_time)[0:10]}.csv')
         filepath.parent.mkdir(parents=True, exist_ok=True)
         csvFile = df.to_csv(filepath)
 
