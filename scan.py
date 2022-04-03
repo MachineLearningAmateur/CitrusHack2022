@@ -5,6 +5,7 @@ import pickle
 import time
 
 from send_sms import Send
+from table import Attendance
 
 class Scan:
     def __init__(self):
@@ -144,3 +145,7 @@ class Scan:
         self.absent() #alerts the students that failed to report for class
         self.showClassRoster()
         cv2.destroyAllWindows()
+
+        table = Attendance(self.classRoster)
+        table.createTablePNG()
+        table.tableCSV()
