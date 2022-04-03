@@ -41,9 +41,6 @@ class Attendance:
 
         return csvFile
 
-
-   
-
 # testing Attendance class
     # testDict = {"Binh Le":True, "James Zhang":True, "Casey Le":False, "Nick Kang":True}
     # tables = Attendance(testDict)
